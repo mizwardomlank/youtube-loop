@@ -5,59 +5,67 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <title>YouTube Loop</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <link rel="stylesheet" type="text/css" media="screen" href="main.css" />
-    <script src="main.js"></script>
+    <style>
+        #player {
+            position: absolute;
+            top: 0;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            margin: auto;
+        }
+    </style>
 </head>
 <body>
     <!-- 1. The <iframe> (and video player) will replace this <div> tag. -->
     <div id="player"></div>
 
     <script>
-    // 2. This code loads the IFrame Player API code asynchronously.
-    var tag = document.createElement('script');
+        // 2. This code loads the IFrame Player API code asynchronously.
+        var tag = document.createElement('script');
 
-    tag.src = "https://www.youtube.com/iframe_api";
-    var firstScriptTag = document.getElementsByTagName('script')[0];
-    firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
+        tag.src = "https://www.youtube.com/iframe_api";
+        var firstScriptTag = document.getElementsByTagName('script')[0];
+        firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
 
-    var section = {
-        start: 61,
-        end: 180
-    };
+        var section = {
+            start: 61,
+            end: 181
+        };
 
-    // 3. This function creates an <iframe> (and YouTube player)
-    //    after the API code downloads.
-    var player;
-    function onYouTubeIframeAPIReady() {
-    player = new YT.Player(
-        'player',
-        {
-        height: '360',
-        width: '640',
-        videoId: 'WkSHgIHNab8',
-        events: {
-            'onReady': onPlayerReady,
-            'onStateChange': onPlayerStateChange
+        // 3. This function creates an <iframe> (and YouTube player)
+        //    after the API code downloads.
+        var player;
+        function onYouTubeIframeAPIReady() {
+        player = new YT.Player(
+            'player',
+            {
+            height: '560',
+            width: '940',
+            videoId: 'WkSHgIHNab8',
+            events: {
+                'onReady': onPlayerReady,
+                'onStateChange': onPlayerStateChange
+            }
+            }
+        );
+        }
+
+        function onPlayerReady(event) {
+            player.seekTo(section.start);
+            player.playVideo();
+        }
+
+        function onPlayerStateChange(event) {
+        if (event.data == YT.PlayerState.PLAYING) {
+            var duration = section.end - section.start;
+            setTimeout(restartVideoSection, duration * 1000);
         }
         }
-    );
-    }
 
-    function onPlayerReady(event) {
-    player.seekTo(section.start);
-    player.playVideo();
-    }
-
-    function onPlayerStateChange(event) {
-    if (event.data == YT.PlayerState.PLAYING) {
-        var duration = section.end - section.start;
-        setTimeout(restartVideoSection, duration * 1000);
-    }
-    }
-
-    function restartVideoSection() {
-    player.seekTo(section.start);
-    }
+        function restartVideoSection() {
+            player.seekTo(section.start);
+        }
     </script>
 </body>
 </html>
