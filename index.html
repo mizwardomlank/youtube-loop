@@ -14,13 +14,66 @@
             right: 0;
             margin: auto;
         }
+        #form-setting { text-align: center; }
+        #youtube-url { width: 300px; }
+        #start, #end { width: 100px; }
     </style>
 </head>
 <body>
+    <form id="form-setting">
+        <input id="youtube-url" type="text" placeholder="youtube url" spellcheck="false">
+        <input id="start" type="number" placeholder="start in seconds">
+        <input id="end" type="number" placeholder="end in deconds">
+        <button type="submit">Refresh</button>
+    </form>
+
     <!-- 1. The <iframe> (and video player) will replace this <div> tag. -->
     <div id="player"></div>
 
     <script>
+        var defaultUrl = 'https://youtu.be/WkSHgIHNab8';
+        var defaultVideoId = extractVideoId(defaultUrl);
+        var defaultSection = {
+            start: 61,
+            end: 181
+        }
+
+        // https://stackoverflow.com/questions/3452546/how-do-i-get-the-youtube-video-id-from-a-url/9102270#9102270
+        function extractVideoId(url) {
+            var regExp = /^.*(youtu\.be\/|v\/|u\/\w\/|embed\/|watch\?v=|\&v=)([^#\&\?]*).*/;
+            var match = url.match(regExp);
+            if (match && match[2].length == 11) {
+                return match[2];
+            } else {
+                return defaultVideoId;
+            }
+        }
+
+        var player;
+        var videoId = extractVideoId(defaultVideoId);
+        var section = defaultSection;
+        
+        // Initialize your application or run some code.
+        var elForm = document.getElementById('form-setting');
+        var elUrl = document.getElementById('youtube-url');
+        var elStart = document.getElementById('start');
+        var elEnd = document.getElementById('end');
+
+        elUrl.value = defaultUrl;
+        elStart.value = defaultSection.start;
+        elEnd.value = defaultSection.end;
+
+        var submit = function(e) {
+            e.preventDefault();
+            section.start = elStart.value || 0;
+            section.end = elEnd.value || 0;
+            videoId = extractVideoId(elUrl.value);
+
+            // Reload player
+            player.loadVideoById(videoId);
+        }
+        elForm.addEventListener("submit", submit, false);
+
         // 2. This code loads the IFrame Player API code asynchronously.
         var tag = document.createElement('script');
 
@@ -28,27 +81,20 @@
         var firstScriptTag = document.getElementsByTagName('script')[0];
         firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
 
-        var section = {
-            start: 61,
-            end: 181
-        };
-
         // 3. This function creates an <iframe> (and YouTube player)
         //    after the API code downloads.
-        var player;
         function onYouTubeIframeAPIReady() {
-        player = new YT.Player(
-            'player',
-            {
-            height: '560',
-            width: '940',
-            videoId: 'WkSHgIHNab8',
-            events: {
-                'onReady': onPlayerReady,
-                'onStateChange': onPlayerStateChange
-            }
-            }
-        );
+            player = new YT.Player(
+                'player', {
+                    height: '560',
+                    width: '940',
+                    videoId: 'WkSHgIHNab8',
+                    events: {
+                        'onReady': onPlayerReady,
+                        'onStateChange': onPlayerStateChange
+                    }
+                }
+            );
         }
 
         function onPlayerReady(event) {
@@ -57,10 +103,10 @@
         }
 
         function onPlayerStateChange(event) {
-        if (event.data == YT.PlayerState.PLAYING) {
-            var duration = section.end - section.start;
-            setTimeout(restartVideoSection, duration * 1000);
-        }
+            if (event.data == YT.PlayerState.PLAYING) {
+                var duration = section.end - section.start;
+                setTimeout(restartVideoSection, duration * 1000);
+            }
         }
 
         function restartVideoSection() {
