@@ -1,5 +1,5 @@
 # youtube-loop
-Make a youtube video loop at a specific time section of a video with youtube iframe
+Make a youtube video loop at a specific time section of a video with youtube iframe.
 
 # Taks
 
