@@ -5,6 +5,7 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <title>YouTube Loop</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/css/bootstrap.min.css" integrity="sha384-PsH8R72JQ3SOdhVi3uxftmaW6Vc51MKb0q5P2rRUpPvrszuE4W1povHYgTpBfshb" crossorigin="anonymous">
     <style>
         #player {
             position: absolute;
@@ -12,30 +13,40 @@
             bottom: 0;
             left: 0;
             right: 0;
-            margin: auto;
+            margin: 70px auto 0;
         }
-        #form-setting { text-align: center; }
-        #youtube-url { width: 300px; }
-        #start, #end { width: 100px; }
+        body {
+          background:url(background.jpg) no-repeat !important;
+          background-size:cover;
+        }
     </style>
 </head>
 <body>
-    <form id="form-setting">
-        <input id="youtube-url" type="text" placeholder="youtube url" spellcheck="false">
-        <input id="start" type="number" placeholder="start in seconds">
-        <input id="end" type="number" placeholder="end in deconds">
-        <button type="submit">Refresh</button>
+    <form id="form-setting" class="form-inline justify-content-md-center">
+        <div class="form-group p-2">
+            <label for="youtube-url">Enter youtube video URL : </label>
+            <input id="youtube-url" type="text" class="form-control ml-2" placeholder="Ex: https://youtu.be/8ekq5T21euU" spellcheck="false">
+        </div>
+        <div class="form-group p-2">
+            <label for="youtube-url">Start : </label>
+            <input id="start" type="number" class="form-control ml-2" placeholder="start time in seconds">
+        </div>
+        <div class="form-group p-2">
+            <label for="youtube-url">End : </label>
+            <input id="end" type="number" class="form-control ml-2" placeholder="end time in seconds">
+        </div>
+        <button type="submit" class="btn btn-primary">Refresh</button>
     </form>
 
     <!-- 1. The <iframe> (and video player) will replace this <div> tag. -->
     <div id="player"></div>
 
     <script>
-        var defaultUrl = 'https://youtu.be/WkSHgIHNab8';
+        var defaultUrl = 'https://youtu.be/8ekq5T21euU';
         var defaultVideoId = extractVideoId(defaultUrl);
         var defaultSection = {
-            start: 61,
-            end: 181
+            start: 10,
+            end: 100
         }
 
         // https://stackoverflow.com/questions/3452546/how-do-i-get-the-youtube-video-id-from-a-url/9102270#9102270
@@ -70,7 +81,7 @@
             videoId = extractVideoId(elUrl.value);
 
             // Reload player
-            player.loadVideoById(videoId);
+            player.loadVideoById(videoId, section.start, "default");
         }
         elForm.addEventListener("submit", submit, false);
 
@@ -88,7 +99,7 @@
                 'player', {
                     height: '560',
                     width: '940',
-                    videoId: 'WkSHgIHNab8',
+                    videoId: defaultVideoId,
                     events: {
                         'onReady': onPlayerReady,
                         'onStateChange': onPlayerStateChange
